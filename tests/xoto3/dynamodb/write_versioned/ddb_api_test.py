@@ -92,7 +92,7 @@ def test_built_transaction_includes_unmodified():
 
 
 def test_built_transaction_does_not_write_deep_equal_items():
-    tx = VersionedTransaction(dict())
+    tx = VersionedTransaction({})
     table = wv.ItemTable("Foo")
     item = dict(id="steve", val=3)
     tx = table.presume(dict(id="steve"), item)(tx)

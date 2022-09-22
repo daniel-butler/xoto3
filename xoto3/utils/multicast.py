@@ -46,7 +46,7 @@ class LazyMulticast(ty.Generic[H, E]):
     ):
         self.lock = threading.Lock()
         self.start_producer = start_producer
-        self.producers: ty.Dict[H, _Producer] = dict()
+        self.producers: ty.Dict[H, _Producer] = {}
 
     def _recv_event_from_producer(self, producer_key: H, producer_event: E):
         ss = self.producers.get(producer_key)
@@ -72,7 +72,7 @@ class LazyMulticast(ty.Generic[H, E]):
                     cleanup = self.start_producer(
                         producer_key, partial(self._recv_event_from_producer, producer_key)
                     )
-                    self.producers[producer_key] = _Producer(dict(), cleanup)
+                    self.producers[producer_key] = _Producer({}, cleanup)
 
                 ss = self.producers[producer_key]
                 q: queue.Queue = queue.Queue()

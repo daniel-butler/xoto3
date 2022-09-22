@@ -137,7 +137,7 @@ def spawn_dynamo_fulfiller(
     def table_batch_get_fulfiller(key_tuples: ty.List[tuple]) -> ty.List[dict]:
         return _batch_get_processor(table_name, key_tuples, key_attr_names, resource)
 
-    request_map: ty.Dict[asyncio.Future, ty.Any] = dict()
+    request_map: ty.Dict[asyncio.Future, ty.Any] = {}
     task = asyncio.create_task(
         queue_batching_fulfiller(
             table_batch_get_fulfiller, queue, request_map, logging_name=table_name

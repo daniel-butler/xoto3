@@ -13,13 +13,13 @@ class Lazy(Generic[L]):
     with (), and can also have more than one copy made of it as desired.
     """
 
-    def __init__(self, loader_func: ty.Callable[..., L], storage=None):  # must have a __dict__
+    def __init__(self, loader_func: ty.Callable[..., L], storage=None):    # must have a __dict__
         """The loader func can encapsulate everything necessary to create the
         resource, or it can take additional arguments via the call.
 
         """
         self.loader_func = loader_func
-        self.storage = storage if storage else lambda: 0
+        self.storage = storage or (lambda: 0)
 
     def __call__(self, *args, **kwargs) -> L:
         """Access to the internal instance.

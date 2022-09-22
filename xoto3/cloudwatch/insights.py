@@ -36,13 +36,12 @@ def cw_enc(any_str: str) -> str:
     basically just takes chars outside a simple set and turns them into
     ASCII hex values prefixed with asterisk.
     """
-    result_str = ""
-    for char in any_str:
-        if char in CW_INSIGHTS_ALLOWED_CHARS_SET:
-            result_str += char
-        else:
-            result_str += "*" + "{0:02x}".format(ord(char))
-    return result_str
+    return "".join(
+        char
+        if char in CW_INSIGHTS_ALLOWED_CHARS_SET
+        else "*" + "{0:02x}".format(ord(char))
+        for char in any_str
+    )
 
 
 def cw_encode_str(value: str) -> str:
@@ -69,7 +68,7 @@ def cw_encode_val(value: ty.Any) -> str:
 
 
 def cw_encode_pair(key: str, value: ty.Any) -> str:
-    return f"{key}~" + cw_encode_val(value)
+    return f"{key}~{cw_encode_val(value)}"
 
 
 def cw_encode_map(m: ty.Mapping[str, ty.Any]) -> str:

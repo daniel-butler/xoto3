@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 PKG_NAME = "xoto3"
-about: dict = dict()
+about: dict = {}
 exec(open(f"{PKG_NAME}/__about__.py").read(), about)
 
 with open("README.md") as fh:

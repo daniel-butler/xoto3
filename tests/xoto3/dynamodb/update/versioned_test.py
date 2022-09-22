@@ -33,21 +33,21 @@ def test_versioned_diffed_update_item():
     called_times = [0]
 
     def updater_func(
-        Table: TableResource,
-        Key: ItemKey,
-        set_attrs: ty.Optional[AttrDict] = None,
-        remove_attrs: ty.Collection[str] = (),
-        add_attrs: ty.Optional[AttrDict] = None,
-        delete_attrs: ty.Optional[AttrDict] = None,
-        **update_args,
-    ) -> Item:
+            Table: TableResource,
+            Key: ItemKey,
+            set_attrs: ty.Optional[AttrDict] = None,
+            remove_attrs: ty.Collection[str] = (),
+            add_attrs: ty.Optional[AttrDict] = None,
+            delete_attrs: ty.Optional[AttrDict] = None,
+            **update_args,
+        ) -> Item:
         """"""
         called_times[0] += 1
         assert set_attrs and "new" in set_attrs
         assert remove_attrs and "to_remove" in remove_attrs
         assert "item_version" in set_attrs  # assert that the item version actually gets included...
         assert "last_written_at" in set_attrs
-        return dict()
+        return {}
 
     item_version_1 = versioned_diffed_update_item(
         FakeTableResource(),
@@ -67,20 +67,20 @@ def test_versioned_diffed_update_item():
         return item
 
     def updater_func_2(
-        Table: TableResource,
-        Key: ItemKey,
-        set_attrs: ty.Optional[AttrDict] = None,
-        remove_attrs: ty.Collection[str] = (),
-        add_attrs: ty.Optional[AttrDict] = None,
-        delete_attrs: ty.Optional[AttrDict] = None,
-        **update_args,
-    ) -> Item:
+            Table: TableResource,
+            Key: ItemKey,
+            set_attrs: ty.Optional[AttrDict] = None,
+            remove_attrs: ty.Collection[str] = (),
+            add_attrs: ty.Optional[AttrDict] = None,
+            delete_attrs: ty.Optional[AttrDict] = None,
+            **update_args,
+        ) -> Item:
         """"""
         called_times[0] += 1
         assert set_attrs and "newnew" in set_attrs
         assert "item_version" in set_attrs  # assert that the item version actually gets included...
         assert "last_written_at" in set_attrs
-        return dict()
+        return {}
 
     item_version_2 = versioned_diffed_update_item(
         FakeTableResource(),
@@ -109,19 +109,19 @@ def test_versioned_diffed_update_item():
     called_times[0] = 0
 
     def fail_first_updater_func(
-        Table: TableResource,
-        Key: ItemKey,
-        set_attrs: ty.Optional[AttrDict] = None,
-        remove_attrs: ty.Collection[str] = (),
-        add_attrs: ty.Optional[AttrDict] = None,
-        delete_attrs: ty.Optional[AttrDict] = None,
-        **update_args,
-    ) -> Item:
+            Table: TableResource,
+            Key: ItemKey,
+            set_attrs: ty.Optional[AttrDict] = None,
+            remove_attrs: ty.Collection[str] = (),
+            add_attrs: ty.Optional[AttrDict] = None,
+            delete_attrs: ty.Optional[AttrDict] = None,
+            **update_args,
+        ) -> Item:
         """"""
         called_times[0] += 1
         if called_times[0] == 1:
             raise ClientError({"Error": {"Code": "ConditionalCheckFailedException"}}, "update_item")
-        return dict()
+        return {}
 
     versioned_diffed_update_item(
         FakeTableResource(),
@@ -179,18 +179,18 @@ def test_string_item_version_coercion_to_int():
     called_times = [0]
 
     def updater_func(
-        Table: TableResource,
-        Key: ItemKey,
-        set_attrs: ty.Optional[AttrDict] = None,
-        remove_attrs: ty.Collection[str] = (),
-        add_attrs: ty.Optional[AttrDict] = None,
-        delete_attrs: ty.Optional[AttrDict] = None,
-        **update_args,
-    ) -> Item:
+            Table: TableResource,
+            Key: ItemKey,
+            set_attrs: ty.Optional[AttrDict] = None,
+            remove_attrs: ty.Collection[str] = (),
+            add_attrs: ty.Optional[AttrDict] = None,
+            delete_attrs: ty.Optional[AttrDict] = None,
+            **update_args,
+        ) -> Item:
         """"""
         called_times[0] += 1
         assert update_args["ExpressionAttributeValues"][":curItemVersion"] == ITEM_VERSION_STR
-        return dict()
+        return {}
 
     item_version_1 = versioned_diffed_update_item(
         FakeTableResource(),
@@ -229,9 +229,9 @@ def test_make_prefetched_get_item():
 
     prefetched_getter = xdv.make_prefetched_get_item(item, refetch)
 
-    assert prefetched_getter(None, dict()) == item
-    assert prefetched_getter(None, dict()) == dict(got=True)
-    assert prefetched_getter(None, dict()) == dict(got=True)
+    assert prefetched_getter(None, {}) == item
+    assert prefetched_getter(None, {}) == dict(got=True)
+    assert prefetched_getter(None, {}) == dict(got=True)
 
 
 def test_nicename_getter(integration_test_id_table):

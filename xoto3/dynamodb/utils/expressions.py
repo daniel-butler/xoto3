@@ -16,7 +16,7 @@ def make_unique_expr_attr_key(attr_name: str) -> str:
     if clean == attr_name:
         return clean
     hashed = hashlib.sha256(attr_name.encode())
-    return clean + "__xoto3__" + hashed.hexdigest()[:_HASH_LEN]
+    return f"{clean}__xoto3__{hashed.hexdigest()[:_HASH_LEN]}"
 
 
 def add_variables_to_expression(query_dict: dict, variables: dict) -> dict:
@@ -69,5 +69,5 @@ def versioned_item_expression(
     return dict(
         ExpressionAttributeNames=expr_names,
         ExpressionAttributeValues=expr_vals,
-        ConditionExpression=item_version_condition + " OR " + first_time_version_condition,
+        ConditionExpression=f"{item_version_condition} OR {first_time_version_condition}",
     )

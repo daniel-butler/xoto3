@@ -76,8 +76,9 @@ def require(
         item = get(transaction, table_name, item_key, nicename=nicename, **kwargs)
         if not item:
             raise_if_empty_getitem_response(
-                dict(), nicename=nicename, key=item_key, table_name=table_name
+                {}, nicename=nicename, key=item_key, table_name=table_name
             )
+
         assert item is not None
         return item
     except ItemUndefinedException as inf:

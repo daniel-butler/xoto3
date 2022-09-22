@@ -28,7 +28,7 @@ def test_pagination_with_nextToken_and_limit():
         nonlocal nt
         nt = next_token
 
-    collected_events = list()
+    collected_events = []
     for page in yield_pages_from_operation(
         *CLOUDWATCH_LOGS_FILTER_LOG_EVENTS, fake_cw, dict(limit=6), last_evaluated_callback=le_cb
     ):

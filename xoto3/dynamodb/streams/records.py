@@ -76,9 +76,9 @@ def matches_key(item_key: ItemKey) -> ty.Callable[[ItemImages], bool]:
         """a filter function"""
         old, new = images
         for k, kv in item_key.items():
-            if old and not old.get(k) == kv:
+            if old and old.get(k) != kv:
                 return False
-            if new and not new.get(k) == kv:
+            if new and new.get(k) != kv:
                 return False
         return True
 

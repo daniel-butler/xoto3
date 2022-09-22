@@ -21,7 +21,9 @@ def test_get_not_exists(integration_test_id_table):
     with pytest.raises(ItemNotFoundException):
         GetItem(integration_test_id_table, random_key, nicename="")
 
-    assert dict() == strongly_consistent_get_item_if_exists(integration_test_id_table, random_key)
+    assert {} == strongly_consistent_get_item_if_exists(
+        integration_test_id_table, random_key
+    )
 
 
 def test_get_exists(integration_test_id_table, integration_test_id_table_put):

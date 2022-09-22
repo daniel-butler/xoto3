@@ -12,5 +12,5 @@ def test_pool():
 
     assert results == set(range(123))
 
-    result2 = sorted(list(pool.map(ident, ["{}".format(i) for i in range(9)], 2)))
+    result2 = sorted(list(pool.map(ident, [f"{i}" for i in range(9)], 2)))
     assert result2 == ["0", "1", "2", "3", "4", "5", "6", "7", "8"]

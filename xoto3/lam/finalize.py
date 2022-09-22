@@ -1,5 +1,6 @@
 """By importing this module, you request an attempt to set up an empty
 array of post-runtime hooks for your Lambda."""
+
 import sys
 import typing as ty
 from logging import getLogger
@@ -8,8 +9,8 @@ from xoto3.utils.env import is_aws_env
 
 logger = getLogger(__name__)
 
-_POST_INVOCATION_RESULT_THUNKS = list()
-_POST_INVOCATION_ERROR_THUNKS = list()
+_POST_INVOCATION_RESULT_THUNKS = []
+_POST_INVOCATION_ERROR_THUNKS = []
 
 
 def register_lambda_finalize_thunk(thunk: ty.Callable[[], None]):

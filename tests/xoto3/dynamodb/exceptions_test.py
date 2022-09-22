@@ -25,14 +25,15 @@ def test_dynamically_named_exceptions_names_and_caches_different_types():
 
 def test_raises_uses_nicename():
     with pytest.raises(ItemNotFoundException) as infe_info:
-        raise_if_empty_getitem_response(dict(), nicename="Duck")
+        raise_if_empty_getitem_response({}, nicename="Duck")
     assert infe_info.value.__class__.__name__ == "DuckNotFoundException"
 
 
 def test_raises_includes_key_and_table_name():
     with pytest.raises(ItemNotFoundException) as infe_info:
         raise_if_empty_getitem_response(
-            dict(), nicename="Plant", table_name="Greenhouse", key=dict(id="p0001")
+            {}, nicename="Plant", table_name="Greenhouse", key=dict(id="p0001")
         )
+
     assert infe_info.value.key == dict(id="p0001")
     assert infe_info.value.table_name == "Greenhouse"

@@ -1,4 +1,5 @@
 """Basic types for DynamoDB data and operations"""
+
 import typing as ty
 from decimal import Decimal
 
@@ -23,10 +24,11 @@ KeySchema = ty.List[KeyAndType]
 PrimaryIndex = KeySchema
 
 
+
+
 class SecondaryIndex(TypedDict):
     IndexName: str
-    KeySchema: KeySchema
-
+    PrimaryIndex: PrimaryIndex
 
 Index = ty.Union[PrimaryIndex, SecondaryIndex]
 

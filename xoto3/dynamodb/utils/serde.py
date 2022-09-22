@@ -26,11 +26,7 @@ def old_dynamodb_stringset_fix(Set: set) -> ty.Optional[set]:
 
 def dynamodb_prewrite_set_transform(Set: set) -> ty.Optional[set]:
     """DynamoDB will not accept Sets with empty strings, or empty Sets."""
-    if not Set:
-        # DynamoDB expects None if your set is empty
-        return None
-    # no guarantees your set is well-formed, but this covers some of the simple cases
-    return Set
+    return Set or None
 
 
 def dynamodb_prewrite_empty_str_in_dict_to_null_transform(d: dict) -> dict:
@@ -45,4 +41,4 @@ def dynamodb_prewrite_empty_str_in_dict_to_null_transform(d: dict) -> dict:
     empty string with None.
 
     """
-    return {k: (v if not (isinstance(v, str) and not v) else None) for k, v in d.items()}
+    return {k: v if not isinstance(v, str) or v else None for k, v in d.items()}

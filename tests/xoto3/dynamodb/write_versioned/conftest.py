@@ -28,13 +28,17 @@ def transaction_to_batch_getter(vt: VersionedTransaction) -> BatchGetItem:
             table_name: list(
                 filter(
                     None,
-                    [_probe_table(vt.tables[table_name], key) for key in item_keys[table_name]],
+                    [
+                        _probe_table(vt.tables[table_name], key)
+                        for key in item_keys[table_name]
+                    ],
                 )
             )
             if table_name in vt.tables
-            else list()
+            else []
             for table_name in item_keys
         }
+
 
     return cast(BatchGetItem, batch_get_item)
 

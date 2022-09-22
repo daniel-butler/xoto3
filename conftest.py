@@ -19,7 +19,7 @@ ItemCleanerGenerator = Iterator[AddKeyToCleaner]
 
 def make_table_cleaner(table_callable: TableCallable) -> ItemCleanerGenerator:
     logger.info("Making table cleaner")
-    keys_to_delete = list()
+    keys_to_delete = []
 
     def add_key_or_item_to_delete(key_or_item: Union[Item, ItemKey]) -> None:
         keys_to_delete.append(extract_key_from_item(table_callable(), key_or_item))
@@ -50,7 +50,7 @@ def make_table_putter(
         yield _put_item
 
         # this consumes the cleaner yielder, which will force cleanup
-        _ = [i for i in cleaner_yielder]
+        _ = list(cleaner_yielder)
 
     return put_item_fixture
 
@@ -85,7 +85,7 @@ def get_integration_test_no_range_key_index_hash_key():
 def integration_test_id_table_cleaner():
     table_cleaner = make_table_cleaner(get_integration_test_id_table)
     yield next(table_cleaner)
-    _ = [i for i in table_cleaner]
+    _ = list(table_cleaner)
 
 
 integration_test_id_table = pytest.fixture(scope="module")(get_integration_test_id_table)

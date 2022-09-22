@@ -48,9 +48,11 @@ def put_unless_exists(Table: TableResource, item: InputItem) -> Tuple[Optional[E
     already_exists_cerror, response = _put_catch_already_exists(
         **key_attr_not_exists(dict(Item=dynamodb_prewrite(item), ReturnValues="ALL_OLD"))
     )
-    if not already_exists_cerror:
-        return None, response
-    return already_exists_cerror, response
+    return (
+        (already_exists_cerror, response)
+        if already_exists_cerror
+        else (None, response)
+    )
 
 
 def put_but_raise_if_exists(

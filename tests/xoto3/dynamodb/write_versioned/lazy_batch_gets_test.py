@@ -8,7 +8,7 @@ from xoto3.dynamodb.write_versioned import (
 def test_batch_get_lazy_load():
     """Tests that multiple serial `get`s perform only a single actual call
     to batch_get"""
-    t = VersionedTransaction(dict())
+    t = VersionedTransaction({})
     table_a = ItemTable("a")
     table_b = ItemTable("b")
 
@@ -33,7 +33,7 @@ def test_batch_get_lazy_load():
 
     def batch_get(item_keys_by_table_name):
         if not item_keys_by_table_name:
-            return dict()
+            return {}
         nonlocal calls
         calls += 1
         return dict(a=[a1, a2], b=[b1])

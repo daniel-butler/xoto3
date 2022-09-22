@@ -38,7 +38,7 @@ def format_failed_records(failed_records: ty.List[RecordFailure]):
         return (
             f"{record['exception_name']} :: {record['exception_str']} :: {record['record_index']}"
         )
-    exception_names = list(set(record["exception_name"] for record in failed_records))
+    exception_names = list({record["exception_name"] for record in failed_records})
     if len(exception_names) == 1:
         # less common case but also helpful for readability
         return f"{len(failed_records)} {exception_names[0]}"
@@ -63,14 +63,13 @@ def process_records_yield_failures(
         try:
             record_processor(record, i)
         except Exception as e:
-            record_failure: RecordFailure = dict(
+            yield dict(
                 # record=record,  # this will make some dead letters too large
                 record_index=i,
                 exception_name=str(e.__class__.__name__),
                 exception_str=str(e),
                 exception=e,
             )
-            yield record_failure
 
 
 class StreamProcessor(Protocol):

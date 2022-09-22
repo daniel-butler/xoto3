@@ -50,7 +50,7 @@ def and_named_condition(condition_fmt: str, name: str, *, ex_attr_name: str = "#
         existing ConditionExpression in the given request dict.
         """
         args = deepcopy(args)
-        existing_names = args.get("ExpressionAttributeNames", dict())
+        existing_names = args.get("ExpressionAttributeNames", {})
         for ex_n in _range_str(ex_attr_name):
             # find an unused expression attribute name
             if ex_n not in existing_names:
@@ -75,7 +75,7 @@ def item_not_exists(key_or_schema: Union[ItemKey, PrimaryIndex]):
 def and_condition(args_dict: dict, condition: str) -> dict:
     with_condition_expression = deepcopy(args_dict)
     if "ConditionExpression" in with_condition_expression:
-        with_condition_expression["ConditionExpression"] += " AND " + condition
+        with_condition_expression["ConditionExpression"] += f" AND {condition}"
     else:
         with_condition_expression["ConditionExpression"] = condition
     return with_condition_expression

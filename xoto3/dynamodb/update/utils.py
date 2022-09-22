@@ -15,7 +15,7 @@ def logged_update_item(
         dyn_resp = Table.update_item(**update_args)
         if update_args.get("ReturnValues", "NONE") != "NONE":
             return make_item_dict_from_updateItem_response(Key, dyn_resp)
-        return dict()
+        return {}
     except Exception as e:
         # verbose logging if an error occurs
         logger.info("UpdateItem arguments", extra=dict(json=dict(update_args)))

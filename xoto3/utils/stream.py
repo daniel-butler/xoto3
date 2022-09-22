@@ -59,7 +59,7 @@ def funnel_sharded_stream(
 
     """
     processing_id = uuid4().hex  # for debugging/sanity
-    shard_processing_threads: ty.Dict[str, threading.Thread] = dict()
+    shard_processing_threads: ty.Dict[str, threading.Thread] = {}
     emptied_shards: ty.Set[str] = set()
 
     def shard_emptied(shard_id: str):

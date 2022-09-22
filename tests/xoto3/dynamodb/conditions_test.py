@@ -15,7 +15,7 @@ def test_item_exists():
         ExpressionAttributeNames={"#nameA": "Peter", "#_anc_name": "group"},
     )
 
-    assert ie(dict()) == dict(
+    assert ie({}) == dict(
         ConditionExpression="attribute_exists(#_anc_name)",
         ExpressionAttributeNames={"#_anc_name": "group"},
     )

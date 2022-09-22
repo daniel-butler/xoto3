@@ -42,8 +42,7 @@ def DiffedUpdateItem(
     whether or not you actually have an update to perform.
 
     """
-    item_diff = build_update_diff(before, after)
-    if item_diff:
+    if item_diff := build_update_diff(before, after):
         logger.info(
             f"Updating item {Key} because there was an item diff.",
             extra=dict(json=dict(item_diff=item_diff)),

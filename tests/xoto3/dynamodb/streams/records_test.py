@@ -42,7 +42,7 @@ def test_current_nonempty_value():
 
 def test_matches_key_fails_with_empty_key():
     with pytest.raises(ValueError):
-        matches_key(dict())
+        matches_key({})
 
 
 def test_matches_key_works_on_new_as_well_as_old():

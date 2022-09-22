@@ -28,8 +28,7 @@ def main():
     path = args.path_to_python_module
 
     if not args.assume_pythonpath:
-        pythonpath = get_pythonpath_for_pipfile_dir_and_venv(path)
-        if pythonpath:
+        if pythonpath := get_pythonpath_for_pipfile_dir_and_venv(path):
             # relaunch this same process but with the new pythonpath
             new_env = {**os.environ, **dict(PYTHONPATH=pythonpath)}
             # os.execve(__file__, sys.argv + ['--assume-pythonpath'], new_env)

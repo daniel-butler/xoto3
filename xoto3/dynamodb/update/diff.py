@@ -45,7 +45,7 @@ def build_update_diff(
     if prediff_transform:
         new = prediff_transform(new)
 
-    diff: Dict[str, Any] = dict()
+    diff: Dict[str, Any] = {}
     for key in new.keys():
         new_val = new[key]
         old_val = old.get(key, None)
@@ -77,7 +77,7 @@ def select_attributes_for_set_and_remove(d: AttrInput) -> SetAndRemoveDict:
 
     May be used on the output of construct_update_diff to prepare a call to UpdateItem.
     """
-    set_attrs: AttrDict = dict()
+    set_attrs: AttrDict = {}
     remove_attrs: Set[str] = set()
     for key, value in d.items():
         if dynamodb_truthy(value):

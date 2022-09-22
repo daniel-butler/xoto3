@@ -17,9 +17,11 @@ RETRY_EXCEPTIONS = ("ProvisionedThroughputExceededException", "ThrottlingExcepti
 
 
 def _is_boto3_retryable(e: Exception) -> bool:
-    if not isinstance(e, botocore.exceptions.ClientError):
-        return False
-    return client_error_name(e) in RETRY_EXCEPTIONS
+    return (
+        client_error_name(e) in RETRY_EXCEPTIONS
+        if isinstance(e, botocore.exceptions.ClientError)
+        else False
+    )
 
 
 backoff = retry_while(sleep_between_expected_failures(_is_boto3_retryable, expo()))

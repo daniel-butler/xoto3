@@ -11,7 +11,9 @@ from .types import Item, ItemKey, TableResource
 logger = getLogger(__name__)
 
 
-GetItem_kwargs: ContextualDefault[dict] = ContextualDefault("get_item_kwargs", dict(), "xoto3-")
+GetItem_kwargs: ContextualDefault[dict] = ContextualDefault(
+    "get_item_kwargs", {}, "xoto3-"
+)
 
 
 @GetItem_kwargs.apply
@@ -57,7 +59,7 @@ def strongly_consistent_get_item_if_exists(
     try:
         return strongly_consistent_get_item(table, key, nicename=nicename)
     except ItemNotFoundException:
-        return dict()
+        return {}
 
 
 F = TypeVar("F", bound=Callable)

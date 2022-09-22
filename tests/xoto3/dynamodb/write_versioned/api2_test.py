@@ -17,7 +17,7 @@ from .conftest import mock_next_run
 
 
 def _randkey():
-    return dict(id="".join((str(randint(0, 9)) for i in range(30))))
+    return dict(id="".join(str(randint(0, 9)) for _ in range(30)))
 
 
 def test_single_table_helpers(integration_test_id_table):
@@ -39,7 +39,7 @@ def _fake_table(
     table_name: str, *key_attrs: str,
 ):
     table = ItemTable(table_name)
-    vt = VersionedTransaction(dict())
+    vt = VersionedTransaction({})
     vt = table.define(*key_attrs)(vt)
     return vt, table
 

@@ -27,6 +27,4 @@ def parse8601strict(dt_s: str, aware: bool = False) -> datetime:
     if dt_s.endswith("Z"):
         dt_s = dt_s.replace(_UTC_Z, _UTC_TZ_OFFSET)
     val = datetime.strptime(dt_s, "%Y-%m-%dT%H:%M:%S.%f%z")
-    if not aware:
-        return val.replace(tzinfo=None)
-    return val
+    return val if aware else val.replace(tzinfo=None)

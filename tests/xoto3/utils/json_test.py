@@ -12,7 +12,7 @@ def test_pre_json_dump():
     with pytest.raises(TypeError):
         json.dumps(pre)
 
-    d = dict(t=(1, 2, 4), lst=[1, 2, dict(st={1, 2, 2})])  # type: ignore
+    d = dict(t=(1, 2, 4), lst=[1, 2, dict(st={1, 2})])
     pre = pre_json_dump(d)
     assert '{"t": [1, 2, 4], "lst": [1, 2, {"st": [1, 2]}]}' == json.dumps(pre)
 

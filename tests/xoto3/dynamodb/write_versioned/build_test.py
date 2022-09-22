@@ -9,10 +9,10 @@ from xoto3.dynamodb.write_versioned.types import VersionedTransaction as VT
 
 
 def build_items(*items_in, key_attributes=("id",)):
-    items = dict()
-    for item in items_in:
-        items[hashable_key(key_from_item(key_attributes, item))] = item
-    return items
+    return {
+        hashable_key(key_from_item(key_attributes, item)): item
+        for item in items_in
+    }
 
 
 def test_get_and_require():

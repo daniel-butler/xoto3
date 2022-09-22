@@ -62,10 +62,7 @@ class TypedTable(Generic[T]):
 
         Your type deserializer must implement a form of deep copy.
         """
-        if not callable(table_name):
-            self.lazy_table = lambda: table_name
-        else:
-            self.lazy_table = table_name
+        self.lazy_table = table_name if callable(table_name) else (lambda: table_name)
         self.item_name = item_name
         self.type_deserializer = type_deserializer
         self.type_serializer = type_serializer
@@ -147,9 +144,7 @@ def update_if_exists(
 
     def _update_if_exists(vt: VersionedTransaction) -> VersionedTransaction:
         item = table.get(key)(vt)
-        if item:
-            return table.put(updater(item))(vt)
-        return vt
+        return table.put(updater(item))(vt) if item else vt
 
     return _update_if_exists
 
