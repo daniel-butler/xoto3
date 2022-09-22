@@ -21,11 +21,9 @@ def build_update(
     """Generates update_item argument dicts of medium complexity"""
     update_args = deepcopy(update_args)
 
-    remove_attrs = set(remove_attrs)
-
     update_expression = ""
-    expr_attr_names = update_args.get("ExpressionAttributeNames", dict())
-    expr_attr_values = update_args.get("ExpressionAttributeValues", dict())
+    expr_attr_names = update_args.get("ExpressionAttributeNames", {})
+    expr_attr_values = update_args.get("ExpressionAttributeValues", {})
     if set_attrs:
         set_attrs = {k: v for k, v in set_attrs.items() if k not in Key}
         set_expr, eans, eavs = build_setattrs_for_update_item(set_attrs)
@@ -33,20 +31,20 @@ def build_update(
         expr_attr_names.update(eans)
         expr_attr_values.update(eavs)
 
-    if remove_attrs:
+    if remove_attrs := set(remove_attrs):
         remove_expr, eans = build_removeattrs_for_update(remove_attrs)
-        update_expression += " " + remove_expr
+        update_expression += f" {remove_expr}"
         expr_attr_names.update(eans)
 
     if add_attrs:
         add_expr, eans, eavs = build_addattrs_for_update_item(add_attrs)
-        update_expression += " " + add_expr
+        update_expression += f" {add_expr}"
         expr_attr_names.update(eans)
         expr_attr_values.update(eavs)
 
     if delete_attrs:
         delete_expr, eans, eavs = build_deleteattrs_for_update_item(delete_attrs)
-        update_expression += " " + delete_expr
+        update_expression += f" {delete_expr}"
         expr_attr_names.update(eans)
         expr_attr_values.update(eavs)
 
@@ -83,8 +81,8 @@ def build_setattrs_for_update_item(attrs_dict: dict) -> ty.Tuple[str, dict, dict
         raise DynamoDbException("Cannot perform an update with no attributes!")
 
     set_expr = "SET "
-    expr_attr_names: ty.Dict[str, str] = dict()
-    expr_attr_values = dict()
+    expr_attr_names: ty.Dict[str, str] = {}
+    expr_attr_values = {}
     for attrname, value in attrs_dict.items():
         key = make_unique_expr_attr_key(attrname)
         set_expr += f"#{key} = :{key}, "
@@ -97,8 +95,8 @@ def build_setattrs_for_update_item(attrs_dict: dict) -> ty.Tuple[str, dict, dict
 
 def build_addattrs_for_update_item(attrs_dict: dict) -> ty.Tuple[str, dict, dict]:
     add_expr = "ADD "
-    ea_names: ty.Dict[str, str] = dict()
-    ea_values = dict()
+    ea_names: ty.Dict[str, str] = {}
+    ea_values = {}
     for attrname, value in attrs_dict.items():
         key = make_unique_expr_attr_key(attrname)
         add_expr += f"#{key} :add{key}, "
@@ -110,8 +108,8 @@ def build_addattrs_for_update_item(attrs_dict: dict) -> ty.Tuple[str, dict, dict
 
 def build_deleteattrs_for_update_item(attrs_dict: dict) -> ty.Tuple[str, dict, dict]:
     del_expr = "DELETE "
-    ea_names: ty.Dict[str, str] = dict()
-    ea_values = dict()
+    ea_names: ty.Dict[str, str] = {}
+    ea_values = {}
     for attrname, value in attrs_dict.items():
         key = make_unique_expr_attr_key(attrname)
         del_expr += f"#{key} :del{key}, "
@@ -125,5 +123,5 @@ def build_removeattrs_for_update(attr_names: ty.Collection) -> ty.Tuple[str, dic
     expr_attr_names = {
         f"#{make_unique_expr_attr_key(attrname)}": attrname for attrname in attr_names
     }
-    remove_expr = "REMOVE " + ", ".join(key for key in set(expr_attr_names))
+    remove_expr = "REMOVE " + ", ".join(set(expr_attr_names))
     return remove_expr, expr_attr_names

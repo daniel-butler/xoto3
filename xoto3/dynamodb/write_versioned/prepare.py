@@ -48,10 +48,12 @@ def items_and_keys_to_clean_table_data(
     }
     return _TableData(
         items={
-            hashable_item_key: existing_items_by_hashable_key.get(hashable_item_key)
+            hashable_item_key: existing_items_by_hashable_key.get(
+                hashable_item_key
+            )
             for hashable_item_key in hashable_keys
         },
-        effects=dict(),
+        effects={},
         key_attributes=key_attributes,
     )
 

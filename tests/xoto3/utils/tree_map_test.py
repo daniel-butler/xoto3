@@ -24,12 +24,15 @@ def test_map_tree_idents():
 def test_map_tree_type_dispatched_tx():
     tx = type_dispatched_transform({Decimal: decimal_to_number, float: int})
     d = dict(
-        one=[dict(two=tuple([dict(three=Decimal("3")), "blah"]), twotwo=2, ff=4.2)], oneone="string"
+        one=[dict(two=(dict(three=Decimal("3")), "blah"), twotwo=2, ff=4.2)],
+        oneone="string",
     )
+
     dr = map_tree(tx, d)
     assert isinstance(dr["one"][0]["two"][0]["three"], int)
     assert dr == dict(
-        one=[dict(two=tuple([dict(three=3), "blah"]), twotwo=2, ff=4)], oneone="string"
+        one=[dict(two=(dict(three=3), "blah"), twotwo=2, ff=4)],
+        oneone="string",
     )
 
 
@@ -72,7 +75,7 @@ def test_type_dispatched_path_transform():
 
 
 def test_compose():
-    itx = compose(lambda s: s + "i", str, int)
+    itx = compose(lambda s: f"{s}i", str, int)
     tx = type_dispatched_transform({float: itx})
 
     d = dict(p=[1.2, 3.4, 8.8])

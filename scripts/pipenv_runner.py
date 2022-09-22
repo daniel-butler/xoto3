@@ -14,9 +14,7 @@ def run_in_pipenv(cmd: str, fileorpath: str, cli_args: ty.Iterable = ()):
     """Looks for the closest Pipfile/pipenv and runs the command within that venv"""
     print(f"checking {fileorpath} with {cmd}")
     fileorpath = os.path.abspath(fileorpath)
-    pipenv_dir = find_pipenv_dir(fileorpath)
-
-    if pipenv_dir:
+    if pipenv_dir := find_pipenv_dir(fileorpath):
         fileorpath = fileorpath[len(pipenv_dir) + 1 :] if pipenv_dir != fileorpath else pipenv_dir
         full_command = ["pipenv", "run", cmd, fileorpath, *cli_args]
         return subprocess.run(

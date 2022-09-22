@@ -11,6 +11,4 @@ def float_to_decimal(Float: float) -> decimal.Decimal:
 
 
 def decimal_to_number(dec: decimal.Decimal) -> ty.Union[int, float]:
-    if dec % 1 == 0:
-        return int(dec)
-    return float(dec)
+    return int(dec) if dec % 1 == 0 else float(dec)

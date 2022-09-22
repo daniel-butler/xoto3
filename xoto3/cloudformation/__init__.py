@@ -1,4 +1,5 @@
 """Gets and caches things from Cloudformation"""
+
 import typing as ty
 
 from xoto3.lazy_session import tll_from_session
@@ -6,8 +7,8 @@ from xoto3.lazy_session import tll_from_session
 _CF_RESOURCE = tll_from_session(lambda sess: sess.resource("cloudformation"))
 
 
-_STACKS: ty.Dict[str, ty.Any] = dict()
-_NAMED_OUTPUTS: ty.Dict[str, str] = dict()
+_STACKS: ty.Dict[str, ty.Any] = {}
+_NAMED_OUTPUTS: ty.Dict[str, str] = {}
 
 
 def _get_cached_stack(stack_name: str):

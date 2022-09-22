@@ -13,10 +13,9 @@ def _x_key_name(x: KeyType, index: Index) -> str:
         schema = index["KeySchema"]  # type: ignore
     except TypeError:
         schema = index
-    for key in schema:
-        if key["KeyType"] == x:
-            return key["AttributeName"]
-    return ""
+    return next(
+        (key["AttributeName"] for key in schema if key["KeyType"] == x), ""
+    )
 
 
 hash_key_name = partial(_x_key_name, "HASH")

@@ -28,7 +28,7 @@ def test_tuples_to_lists():
 
 
 def test_strip_falsy_top_level():
-    d = dict(a="yes", b=False, c="", d=set(), e=list(), f=dict(), g=dict(h=False))
+    d = dict(a="yes", b=False, c="", d=set(), e=[], f={}, g=dict(h=False))
     assert dynamodb_prewrite(d) == dict(a="yes", g=dict(h=False))
 
 
@@ -38,23 +38,24 @@ def test_dynamodb_prewrite():
     with those values recursively, but ONLY those values.
     """
     test_dict = dict(
-        key0=0.0,  # kept
-        key1="string val remains",  # kept
-        key2=0,  # kept
-        key3=1,  # kept
-        key4=True,  # kept
-        key5=False,  # stripped
-        key6="",  # stripped,
-        key7=set(),  # stripped,
-        key8=dict(),  # stripped
-        key9=list(),  # stripped
+        key0=0.0,
+        key1="string val remains",
+        key2=0,
+        key3=1,
+        key4=True,
+        key5=False,
+        key6="",
+        key7=set(),
+        key8={},
+        key9=[],
     )
+
     with pytest.raises(TypeError):
         serialize_item(test_dict)
     SPLIT = 5
 
     stripped = dynamodb_prewrite(test_dict)
-    for i in range(0, SPLIT):
+    for i in range(SPLIT):
         assert f"key{i}" in stripped
     for i in range(SPLIT, len(test_dict.keys())):
         assert f"key{i}" not in stripped
@@ -68,13 +69,14 @@ def test_more_prewrite():
         k1={"nonempty string"},
         k2={"nonempty string", ""},
         k3=tuple(),
-        k4=tuple([1, 2, 3]),
-        k5=tuple(["", "nonempty string", ""]),
-        k6=dict(k1=[dict(j1={"nonempty", "blah"})]),  # nested set
-        k7=dict(k1=tuple([dict(j1={"nonempty", "blah"})])),  # nested tuple gets turned into list
-        k8={1, 2, 3, Decimal("3.1415926535")},  # NS
-        k9={Binary(b"123"), Binary(b"456")},  # BS
+        k4=(1, 2, 3),
+        k5=("", "nonempty string", ""),
+        k6=dict(k1=[dict(j1={"nonempty", "blah"})]),
+        k7=dict(k1=(dict(j1={"nonempty", "blah"}),)),
+        k8={1, 2, 3, Decimal("3.1415926535")},
+        k9={Binary(b"123"), Binary(b"456")},
     )
+
 
     # this used to error consistently, but a boto3 upgrade (somewhere around 1.16?) has made it stop erroring.
     #

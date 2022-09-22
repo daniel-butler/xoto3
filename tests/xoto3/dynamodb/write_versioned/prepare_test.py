@@ -32,7 +32,7 @@ def test_all_items_for_next_attempt_different_key_schemas():
     FooTable = wv.ItemTable("Foo")
     BarTable = wv.ItemTable("Bar")
     BazTable = wv.ItemTable("Baz")
-    vt = wv.VersionedTransaction(dict())
+    vt = wv.VersionedTransaction({})
     vt = FooTable.define("someKey")(vt)
     vt = BarTable.define("someOtherKey")(vt)
     vt = BazTable.define("aThirdKey")(vt)

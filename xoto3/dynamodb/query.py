@@ -23,7 +23,7 @@ def single_partition(index: Index, partition_value: KeyAttributeType) -> TableQu
 
     Only indices (whether primary or secondary) with a composite key may be queried.
     """
-    query: Dict[str, Any] = dict()
+    query: Dict[str, Any] = {}
     try:
         query["IndexName"] = index["IndexName"]  # type: ignore
     except TypeError:
@@ -96,32 +96,34 @@ def within_range(
 ) -> QueryTransformer:
     by = range_key_name(index)
 
-    expr_attr_names = dict()
-    expr_attr_values = dict()
+    expr_attr_names = {}
+    expr_attr_values = {}
     key_condition_expr = ""
 
     if gte and lte:
         expr_attr_names["#sortBy"] = by
         expr_attr_values[":GTE"] = gte
         expr_attr_values[":LTE"] = lte
-        key_condition_expr += f" AND #sortBy BETWEEN :GTE and :LTE"
+        key_condition_expr += " AND #sortBy BETWEEN :GTE and :LTE"
     elif gte:
         expr_attr_names["#sortBy"] = by
         expr_attr_values[":GTE"] = gte
-        key_condition_expr += f" AND #sortBy >= :GTE "
+        key_condition_expr += " AND #sortBy >= :GTE "
     elif lte:
         expr_attr_names["#sortBy"] = by
         expr_attr_values[":LTE"] = lte
-        key_condition_expr += f" AND #sortBy <= :LTE "
+        key_condition_expr += " AND #sortBy <= :LTE "
 
     def tx_query(query: TableQuery) -> TableQuery:
         query = deepcopy(query)
         query["ExpressionAttributeNames"] = dict(
-            query.get("ExpressionAttributeNames", dict()), **expr_attr_names
+            query.get("ExpressionAttributeNames", {}), **expr_attr_names
         )
+
         query["ExpressionAttributeValues"] = dict(
-            query.get("ExpressionAttributeValues", dict()), **expr_attr_values
+            query.get("ExpressionAttributeValues", {}), **expr_attr_values
         )
+
         if key_condition_expr:
             query["KeyConditionExpression"] = (
                 query.get("KeyConditionExpression", "") + key_condition_expr

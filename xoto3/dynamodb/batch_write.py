@@ -46,8 +46,11 @@ def BatchWriteItem(
     num_written = 0
 
     primary_keys = (
-        [key["AttributeName"] for key in table.key_schema] if not error_on_duplicates else None
+        None
+        if error_on_duplicates
+        else [key["AttributeName"] for key in table.key_schema]
     )
+
 
     with table.batch_writer(overwrite_by_pkeys=primary_keys) as batch_writer:
         put_item_with_backoff = backoff(batch_writer.put_item)

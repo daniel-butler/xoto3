@@ -158,27 +158,26 @@ def versioned_diffed_update_item(
             update_item(table, item_key, **update_arguments, **expr)
             return updated_item
         except ClientError as ce:
-            if is_conditional_update_retryable(ce):
-                msg = (
-                    "Attempt %d to update %s in table %s was beaten "
-                    + "by a different update. Sleeping for %s seconds."
-                )
-                sleep = 0.0
-                if random_sleep_on_lost_race:
-                    sleep = random.uniform(MIN_TRANSACTION_SLEEP, MAX_TRANSACTION_SLEEP)
-                    time.sleep(sleep)
-                logger.warning(
-                    msg,
-                    attempt,
-                    nicename,
-                    table.name,
-                    f"{sleep:.3f}",
-                    extra=dict(
-                        json=dict(item_key=item_key, item_diff=item_diff, ce=str(ce), sleep=sleep,)
-                    ),
-                )
-            else:
+            if not is_conditional_update_retryable(ce):
                 raise
+            msg = (
+                "Attempt %d to update %s in table %s was beaten "
+                + "by a different update. Sleeping for %s seconds."
+            )
+            sleep = 0.0
+            if random_sleep_on_lost_race:
+                sleep = random.uniform(MIN_TRANSACTION_SLEEP, MAX_TRANSACTION_SLEEP)
+                time.sleep(sleep)
+            logger.warning(
+                msg,
+                attempt,
+                nicename,
+                table.name,
+                f"{sleep:.3f}",
+                extra=dict(
+                    json=dict(item_key=item_key, item_diff=item_diff, ce=str(ce), sleep=sleep,)
+                ),
+            )
     raise get_item_exception_type(nicename, VersionedUpdateFailure)(
         f"Failed to update {nicename} without performing overwrite {item_key}. "
         f"Was beaten to the update {attempt} times.",

@@ -10,13 +10,13 @@ from xoto3.dynamodb.update.diff import (
 
 
 def test_is_meaningful_value_update():
-    assert not is_meaningful_value_update(None, dict())
-    assert not is_meaningful_value_update(None, list())
+    assert not is_meaningful_value_update(None, {})
+    assert not is_meaningful_value_update(None, [])
     assert not is_meaningful_value_update(None, "")
     assert not is_meaningful_value_update(None, set())
     assert not is_meaningful_value_update(None, False)
     assert not is_meaningful_value_update(None, None)
-    assert not is_meaningful_value_update(dict(), None)
+    assert not is_meaningful_value_update({}, None)
     assert not is_meaningful_value_update(set(), None)
     assert not is_meaningful_value_update("peter", "peter")
 
@@ -76,7 +76,7 @@ def test_build_update_diff():
     d5["null_value"] = None
     d5["empty_list"] = []
     d5["empty_set"] = set()
-    d5["externalContent"] = list()
+    d5["externalContent"] = []
     d5["false_bool"] = False
     assert not build_update_diff(d1, d5)
 
@@ -114,9 +114,9 @@ def test_select_attributes():
     d2.pop("key1")  # removed
     d2["key2"] = 7  # changed
     d2["key5"] = [3, 4, 5]  # added
-    d2["d1-none-val"] = list()  # not a real change
+    d2["d1-none-val"] = []
     d2.pop("d1-empty-val")  # removal even though it was previously empty
-    d2["d2-empty-val"] = list()  # this is not a proper add - ignore it
+    d2["d2-empty-val"] = []
 
     d1_d2_diff = build_update_diff(d1, d2)
     attrs = select_attributes_for_set_and_remove(d1_d2_diff)
@@ -133,7 +133,14 @@ def test_select_attributes():
 
 
 def test_full_diffed_update_remove_new_dangerous_empty_strings():
-    content = dict(id="1234", group="okaygroup", box=[1, 2, 3], empty_thing=list(), empty_string="")
+    content = dict(
+        id="1234",
+        group="okaygroup",
+        box=[1, 2, 3],
+        empty_thing=[],
+        empty_string="",
+    )
+
 
     uc = copy.deepcopy(content)
     uc["group"] = ""

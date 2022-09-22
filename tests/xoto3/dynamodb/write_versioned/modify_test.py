@@ -6,7 +6,7 @@ from xoto3.dynamodb.write_versioned.modify import TableSchemaUnknownError, delet
 
 def test_cant_delete_non_prefetched_item_without_specifying_key():
 
-    tx = delete(VersionedTransaction(dict()), "table1", dict(id="whatever"))
+    tx = delete(VersionedTransaction({}), "table1", dict(id="whatever"))
 
     tx = delete(tx, "table1", dict(id="yo", value=3, full_item=True))
 

@@ -34,9 +34,7 @@ _DDB_CLIENT = tll_from_session(lambda s: s.client("dynamodb"))
 
 
 def table_name(table: TableNameOrResource) -> str:
-    if not isinstance(table, str):
-        return table.name
-    return table
+    return table if isinstance(table, str) else table.name
 
 
 def known_key_schema(table: TableNameOrResource) -> Tuple[str, ...]:
@@ -69,8 +67,10 @@ def known_key_schema(table: TableNameOrResource) -> Tuple[str, ...]:
 
 
 def _collect_codes(resp: dict) -> Set[str]:
-    cc = {reason["Code"] for reason in resp["Error"].get("CancellationReasons", tuple())}
-    return cc
+    return {
+        reason["Code"]
+        for reason in resp["Error"].get("CancellationReasons", tuple())
+    }
 
 
 _RetryableTransactionCancelledErrorCodes = {
@@ -123,7 +123,7 @@ def _ddb_batch_get_item(
 
 def make_transact_multiple_but_optimize_single(ddb_client):
     def boto3_transact_multiple_but_optimize_single(TransactItems: List[dict], **kwargs) -> Any:
-        if len(TransactItems) == 0:
+        if not TransactItems:
             _log.debug("Nothing to transact - returning")
             return
         # ClientRequestToken, if provided, indicates a desire to use
@@ -180,12 +180,12 @@ def built_transaction_to_transact_write_items_args(
     item_version_attribute: str = "item_version",
     last_written_attribute: str = "last_written_at",
 ) -> dict:
-    transact_items = list()
+    transact_items = []
     for table_name, tbl_data in transaction.tables.items():
         items, effects, key_attributes = tbl_data
 
         def get_existing_item(hashable_key) -> dict:
-            return items.get(hashable_key) or dict()
+            return items.get(hashable_key) or {}
 
         keys_of_items_to_be_modified = set()
 

@@ -57,8 +57,11 @@ def presume(
         table_data = transaction.tables[table_name]
     else:
         table_data = _TableData(
-            items=dict(), effects=dict(), key_attributes=standard_key_attributes(*item_key.keys())
+            items={},
+            effects={},
+            key_attributes=standard_key_attributes(*item_key.keys()),
         )
+
     hkey = hashable_key(item_key)
     if hkey not in table_data.items:
         item_value = dynamodb_prewrite(item_value, prewrite_transform) if item_value else None

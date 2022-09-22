@@ -27,10 +27,10 @@ def lambda_time_with_margin() -> dict:
 
 
 def default_start_end_kwargs(defaults: dict, kwargs: dict):
-    start = kwargs.get("start", None)
+    start = kwargs.get("start")
     if not start:
         kwargs["start"] = defaults["start"]
-    end = kwargs.get("end", None)
+    end = kwargs.get("end")
     if not end:
         kwargs["end"] = defaults["end"]
 

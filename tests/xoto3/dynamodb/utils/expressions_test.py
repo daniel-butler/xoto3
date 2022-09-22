@@ -15,7 +15,7 @@ _TEST_TABLE_NAME = os.environ.get("XOTO3_TEST_DYNAMODB_TABLE_NAME", "")
 def test_add_variables_to_expression():
     variables = dict(deletedAt="2020-01-01T00:00:00.000000Z", do_a_thing="okay")
 
-    query_dict = add_variables_to_expression(dict(), variables)
+    query_dict = add_variables_to_expression({}, variables)
 
     assert query_dict["ExpressionAttributeNames"] == {
         "#deletedAt": "deletedAt",
@@ -30,7 +30,7 @@ def test_add_variables_to_expression():
 def test_add_variables_to_expression_with_bad_attribute_name():
     variables = {"thingy": "THINGY", "deleted__At": "2020-02-02T00:00:00.000000Z"}
 
-    query_dict = add_variables_to_expression(dict(), variables)
+    query_dict = add_variables_to_expression({}, variables)
     assert query_dict["ExpressionAttributeNames"] == {
         "#thingy": "thingy",
         "#deleted__At": "deleted__At",
@@ -81,9 +81,10 @@ def fix_item():
 
 def test_expression_attributes_against_dynamodb(fix_item, integration_test_id_table):
     item_random_key = {
-        attr: "xoto3-integ-test" + str(random.randint(0, 99999999999))
+        attr: f"xoto3-integ-test{random.randint(0, 99999999999)}"
         for attr in table_primary_keys(integration_test_id_table)
     }
+
     # requires string attributes for the primary key because i'm too
     # lazy to make this key generation fancier for a test.
 

@@ -38,7 +38,7 @@ def make_key_slicer(table):
         old, new = images
         item = new or old
         assert item is not None
-        key = dict()
+        key = {}
         key[hash_key] = item[hash_key]
         if range_key:
             key[range_key] = item[range_key]
@@ -51,9 +51,9 @@ def make_item_slicer(key_slicer, attribute_names):
     def item_slicer(images: ItemImages) -> dict:
         old, new = images
         if not new:
-            new = dict()
+            new = {}
         if not old:
-            old = dict()
+            old = {}
         item = new or old
         key = key_slicer(images)
         diff = {name for name in (set(old) | set(new)) if old.get(name) != new.get(name)}
@@ -73,8 +73,9 @@ def main():
         "--attribute-names",
         help="Any attributes other than the key to print on every update; space separated",
         nargs="*",
-        default=list(),
+        default=[],
     )
+
     args = parser.parse_args()
 
     DDB_RES = boto3.resource("dynamodb")

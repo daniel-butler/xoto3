@@ -65,8 +65,7 @@ def main():
             log_reducer(log_event)
     except KeyboardInterrupt:
         pass
-    exit = getattr(log_reducer, "__exit__", None)
-    if exit:
+    if exit := getattr(log_reducer, "__exit__", None):
         exit()
     return events
 

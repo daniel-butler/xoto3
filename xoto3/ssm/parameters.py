@@ -75,9 +75,7 @@ def get(Name: str, default=None, error=True, ssm=None, **kwargs) -> str:
         raise ce
     param_value = param["Parameter"]["Value"]
 
-    # check if this is a multipart param
-    param_part_count = _get_num_multiparts(param_value)
-    if param_part_count:
+    if param_part_count := _get_num_multiparts(param_value):
         try:
             return _get_multipart_param(Name, param_part_count, ssm)
         except (KeyError, ValueError, ClientError) as e:
@@ -98,7 +96,7 @@ def put(Name: str, Value: str, Type: ParameterType = "String", Overwrite=True, s
         _put_multipart_param(ssm, Name, Value, Type)
     else:
         if "Description" not in kwargs:
-            kwargs["Description"] = f"Set by {SCRIPT_NAME} at " + datetime.now().isoformat()
+            kwargs["Description"] = f"Set by {SCRIPT_NAME} at {datetime.now().isoformat()}"
         ssm.put_parameter(Name=Name, Value=Value, Type=Type, Overwrite=Overwrite, **kwargs)
 
 
@@ -119,13 +117,13 @@ def _get_num_multiparts(param_value: str) -> int:
 
 def _get_multipart_param(param_name: str, count: int, ssm) -> str:
     """You must pass the count returned from _get_num_multiparts"""
-    param_value = ""
     i = 0
-    for i in range(count):
-        param_value += ssm.get_parameter(Name=_get_multipart_param_part_name(param_name, i))[
+    return "".join(
+        ssm.get_parameter(Name=_get_multipart_param_part_name(param_name, i))[
             "Parameter"
         ]["Value"]
-    return param_value
+        for i in range(count)
+    )
 
 
 def _get_multipart_param_part_name(name, part_num):
@@ -157,10 +155,12 @@ def _put_multipart_param(ssm, name: str, value: str, Type: ParameterType):
     put_param_payload = dict(
         Name=name,
         Value=json.dumps({_MULTIPART_PARAM_COUNT: num_parts}),
-        Description="A multipart SSM parameter, stored at " + thistime + f", by {SCRIPT_NAME}",
+        Description=f"A multipart SSM parameter, stored at {thistime}"
+        + f", by {SCRIPT_NAME}",
         Overwrite=False,
         Type=Type,
     )
+
     try:
         ssm.put_parameter(**put_param_payload)
     except ClientError as ce:
@@ -174,7 +174,11 @@ def _put_multipart_param(ssm, name: str, value: str, Type: ParameterType):
         ssm.put_parameter(**put_param_payload)
 
     for i in range(num_parts):
-        des = f"Part {i+1} of {num_parts} of {name}, stored at " + thistime + f", by {SCRIPT_NAME}"
+        des = (
+            f"Part {i + 1} of {num_parts} of {name}, stored at {thistime}"
+            + f", by {SCRIPT_NAME}"
+        )
+
         ssm.put_parameter(
             Name=_get_multipart_param_part_name(name, i),
             Value=value[i * _MAX_PARAM_SIZE : (i + 1) * _MAX_PARAM_SIZE],

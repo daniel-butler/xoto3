@@ -43,20 +43,10 @@ def _write(
         # effect for the given table. We're going to attempt various
         # ways of getting them, starting by asking DynamoDB directly.
         key_attributes = known_key_schema(table)
-        items = dict()
-        effects = dict()
+        items = {}
+        effects = {}
         if not key_attributes:
-            if isinstance(put_or_delete, Delete):
-                # hope that the user provided an actual item key
-                if len(put_or_delete.item_key) > 2:
-                    raise TableSchemaUnknownError(
-                        f"We don't know the key schema for {table_name} because you haven't defined it "
-                        "and it is not guessable from the delete you requested."
-                        "Specify this delete in terms of the key only and this should work fine."
-                    )
-                # at this point this is a best guess
-                key_attributes = standard_key_attributes(*put_or_delete.item_key.keys())
-            else:
+            if not isinstance(put_or_delete, Delete):
                 # it's a put - we can't make this work at all
                 raise TableSchemaUnknownError(
                     f"We don't have enough information about table {table_name} to properly derive "
@@ -64,6 +54,15 @@ def _write(
                     "Prefetching this item by key would solve that problem."
                 )
 
+            # hope that the user provided an actual item key
+            if len(put_or_delete.item_key) > 2:
+                raise TableSchemaUnknownError(
+                    f"We don't know the key schema for {table_name} because you haven't defined it "
+                    "and it is not guessable from the delete you requested."
+                    "Specify this delete in terms of the key only and this should work fine."
+                )
+            # at this point this is a best guess
+            key_attributes = standard_key_attributes(*put_or_delete.item_key.keys())
     item_or_none, item_key = (
         (put_or_delete.item, key_from_item(key_attributes, put_or_delete.item))
         if isinstance(put_or_delete, Put)

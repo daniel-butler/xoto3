@@ -1,4 +1,5 @@
 """Utilities for BatchGets from DynamoDB"""
+
 import os
 import timeit
 import typing as ty
@@ -34,7 +35,7 @@ class KeyItemPair(ty.NamedTuple):
 
 
 BatchGetItem_kwargs: ContextualDefault[dict] = ContextualDefault(
-    "batch_get_item_kwargs", dict(), "xoto3-"
+    "batch_get_item_kwargs", {}, "xoto3-"
 )
 
 
@@ -169,7 +170,7 @@ def BatchGetItemTupleKeys(
                 total_count += 1
                 yield key_value_tuple, item
     else:
-        ddbr = dynamodb_resource if dynamodb_resource else _DYNAMODB_RESOURCE()
+        ddbr = dynamodb_resource or _DYNAMODB_RESOURCE()
         # single-threaded serial batches
         for key_values_batch_set in batches_of_100_iter:
             results = _get_single_batch(
@@ -212,14 +213,14 @@ def _get_single_batch(
 
     logger.debug("Starting up single batch get of %d on %s", len(key_values_batch), table_name)
 
-    ddbr = dynamodb_resource if dynamodb_resource else _DYNAMODB_RESOURCE()
+    ddbr = dynamodb_resource or _DYNAMODB_RESOURCE()
     batch_get_with_backoff = backoff(ddbr.batch_get_item)
 
     table_request = {
         "Keys": [_kv_tuple_to_key(kt, key_attr_names) for kt in key_values_batch],
         **batch_get_item_kwargs,
     }
-    output: List[KeyTupleItemPair] = list()
+    output: List[KeyTupleItemPair] = []
     while table_request and table_request.get("Keys", []):
         start = timeit.default_timer()  # solely for logging performance stats
 
@@ -249,8 +250,7 @@ def _get_single_batch(
     # return empty dict for every item that does not exist in Dynamo in this batch
     if key_values_batch:
         logger.debug("Yielding %d missing items from %s", len(key_values_batch), table_name)
-        for missing_item in key_values_batch:
-            output.append((missing_item, dict()))
+        output.extend((missing_item, {}) for missing_item in key_values_batch)
     return output
 
 

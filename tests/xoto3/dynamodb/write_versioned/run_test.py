@@ -247,7 +247,7 @@ def test_optimistic_delete_nonexistent(integration_test_id_table):
     def opt_delete(tx: VersionedTransaction) -> VersionedTransaction:
         return delete(tx, integration_test_id_table.name, dict(id=test_id_to_delete))
 
-    res = versioned_transact_write_items(opt_delete, dict())
+    res = versioned_transact_write_items(opt_delete, {})
 
     assert None is get(res, integration_test_id_table.name, dict(id=test_id_to_delete))
 
@@ -264,7 +264,7 @@ def test_optimistic_delete_existing(integration_test_id_table_put, integration_t
         tx_run_count += 1
         return delete(tx, integration_test_id_table.name, dict(id=test_id_to_delete))
 
-    res = versioned_transact_write_items(opt_delete, dict())
+    res = versioned_transact_write_items(opt_delete, {})
 
     assert None is get(res, integration_test_id_table.name, dict(id=test_id_to_delete))
 

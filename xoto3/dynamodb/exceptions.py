@@ -46,8 +46,9 @@ def get_item_exception_type(item_name: str, base_exc: Type[X]) -> Type[X]:
     if exc_key not in _GENERATED_ITEM_EXCEPTION_TYPES:
         exc_minus_Item = base_name[4:] if base_name.startswith("Item") else base_name
         _GENERATED_ITEM_EXCEPTION_TYPES[exc_key] = type(
-            f"{item_name}{exc_minus_Item}", (base_exc,), dict()
+            f"{item_name}{exc_minus_Item}", (base_exc,), {}
         )
+
     return _GENERATED_ITEM_EXCEPTION_TYPES[exc_key]
 
 

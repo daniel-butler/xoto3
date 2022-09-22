@@ -62,8 +62,7 @@ class ChunkQueueIterable(ty.Iterable):
             try:
                 chunk = self.queue.get(timeout=1.0)
                 self.chunks_received += 1
-                for item in chunk:
-                    yield item
+                yield from chunk
             except Empty:
                 pass
         self.done = True
@@ -75,7 +74,7 @@ class ChunkQueueIterable(ty.Iterable):
 def run_process_on_conn(conn, i):
     """The actual process that does your dirty work for you."""
     # logger.debug('Started running process %d', i)
-    runnables = dict()
+    runnables = {}
     while True:
         # logger.debug('Process %d waiting on next item across pipe', i)
         pipe_item = conn.recv()
@@ -123,7 +122,7 @@ class PipedProcessPool:
         """
         logger.debug("Beginning to create process pool of size %d", size)
         self.size = size
-        pipes = [Pipe() for i in range(size)]
+        pipes = [Pipe() for _ in range(size)]
         self.child_conns = [pipe[1] for pipe in pipes]
         self.parent_conns = [pipe[0] for pipe in pipes]
         self.processes = [
@@ -141,7 +140,7 @@ class PipedProcessPool:
         for thread in self.result_threads:
             thread.daemon = True
             thread.start()
-        self.chunk_queues: ty.Dict[str, ChunkQueueIterable] = dict()
+        self.chunk_queues: ty.Dict[str, ChunkQueueIterable] = {}
         self.closed = size == 0
         logger.debug("Created process pool of size %d", size)
 
